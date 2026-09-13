@@ -1,5 +1,14 @@
 import type { Metadata } from 'next';
-import { AppShell, Container, MantineProvider, Stack, Text, Title } from '@mantine/core';
+import {
+  AppShell,
+  AppShellHeader,
+  AppShellMain,
+  Container,
+  MantineProvider,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { Navigation } from '@/components/Navigation';
 import '@mantine/core/styles.css';
 import './globals.css';
@@ -15,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <body>
         <MantineProvider>
           <AppShell padding="md">
-            <AppShell.Header withBorder p="md">
+            <AppShellHeader withBorder p="md">
               <Container size="lg">
                 <Stack gap={4}>
                   <Title order={2}>Gomita Nails</Title>
@@ -25,12 +34,12 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
                   <Navigation />
                 </Stack>
               </Container>
-            </AppShell.Header>
-            <AppShell.Main>
+            </AppShellHeader>
+            <AppShellMain>
               <Container size="lg" py="md">
                 {children}
               </Container>
-            </AppShell.Main>
+            </AppShellMain>
           </AppShell>
         </MantineProvider>
       </body>
