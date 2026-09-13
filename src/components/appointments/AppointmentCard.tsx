@@ -16,6 +16,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
   const formattedDate = new Date(appointment.dateTime).toLocaleString('es-MX', {
     dateStyle: 'medium',
     timeStyle: 'short',
+    timeZone: 'America/Mexico_City',
   });
 
   return (

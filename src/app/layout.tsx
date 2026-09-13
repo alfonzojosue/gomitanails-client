@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import {
   AppShell,
@@ -18,12 +19,12 @@ export const metadata: Metadata = {
   description: 'Sistema de gestión para citas, clientes y servicios de Gomita Nails.',
 };
 
-export default function RootLayout({ children }: LayoutProps<'/'>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es">
       <body>
         <MantineProvider>
-          <AppShell padding="md">
+          <AppShell padding="md" header={{ height: { base: 200, sm: 170 } }}>
             <AppShellHeader withBorder p="md">
               <Container size="lg">
                 <Stack gap={4}>

@@ -16,8 +16,14 @@ export function Navigation() {
   const pathname = usePathname();
 
   return (
-    <Group component="nav" gap="xs" wrap="wrap">
-      {navItems.map((item) => (
+    <Group component="nav" gap="xs" wrap="nowrap" style={{ overflowX: "auto" }}>
+      {navItems.map((item) => {
+        const isActive =
+          item.href === '/'
+            ? pathname === '/'
+            : pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+        return (
         <NavLink
           key={item.href}
           component={Link}
@@ -25,9 +31,11 @@ export function Navigation() {
           label={item.label}
           leftSection={<item.icon size={16} />}
           variant="filled"
-          active={pathname === item.href}
+          active={isActive}
+          aria-current={isActive ? 'page' : undefined}
         />
-      ))}
+        );
+      })}
     </Group>
   );
 }
