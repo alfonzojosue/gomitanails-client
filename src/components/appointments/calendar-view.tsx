@@ -25,10 +25,14 @@ export function CalendarView({ appointments, selectedDate, onDateChange }: Calen
         }}
         renderDay={(date) => {
           const hasAppointment = appointmentDays.has(getCalendarDateKey(date));
+          const dayLabel = new Date(date).getDate();
+          const ariaLabel = hasAppointment
+            ? `Día ${dayLabel} con citas registradas`
+            : `Día ${dayLabel} sin citas registradas`;
 
           return (
             <Indicator size={6} color="bubblegum" offset={-2} disabled={!hasAppointment}>
-              {new Date(date).getDate()}
+              <span aria-label={ariaLabel}>{dayLabel}</span>
             </Indicator>
           );
         }}

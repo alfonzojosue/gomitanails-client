@@ -50,7 +50,14 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      setMinimumDate(new Date());
+      const nextNow = new Date();
+      setMinimumDate(nextNow);
+      setDateTime((currentDateTime) => {
+        const currentSelection = parseDateTimeValue(currentDateTime);
+        return currentSelection && currentSelection.getTime() < nextNow.getTime()
+          ? nextNow
+          : currentDateTime;
+      });
     }, 30_000);
 
     return () => window.clearInterval(intervalId);

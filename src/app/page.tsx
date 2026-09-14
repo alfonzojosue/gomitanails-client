@@ -49,9 +49,16 @@ export default function HomePage() {
     const nextDayRevenue = nextTodayAppointments
       .filter((appointment) => appointment.status !== 'CANCELADA')
       .reduce((total, appointment) => total + appointment.servicePrice, 0);
-    const nextUpcomingClients = sortedUpcomingAppointments
-      .slice(0, 3)
-      .map((appointment) => appointment.clientName);
+    const uniqueUpcomingClients = sortedUpcomingAppointments.reduce<
+      { clientId: string; clientName: string }[]
+    >((accumulator, appointment) => {
+      if (accumulator.some((client) => client.clientId === appointment.clientId)) {
+        return accumulator;
+      }
+
+      return [...accumulator, { clientId: appointment.clientId, clientName: appointment.clientName }];
+    }, []);
+    const nextUpcomingClients = uniqueUpcomingClients.slice(0, 3).map((client) => client.clientName);
 
     return {
       todayAppointments: nextTodayAppointments,
