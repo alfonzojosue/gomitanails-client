@@ -15,11 +15,11 @@ export function NewAppointmentButton({ label = '+ Nueva cita', ...buttonProps }:
   return (
     <>
       <Button
+        {...buttonProps}
         leftSection={<IconPlus size={16} />}
         variant="gradient"
         gradient={{ from: 'bubblegum.5', to: 'lavender.5', deg: 135 }}
         onClick={open}
-        {...buttonProps}
       >
         {label}
       </Button>

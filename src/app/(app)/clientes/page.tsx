@@ -61,9 +61,12 @@ export default function ClientesPage() {
         <SimpleGrid cols={{ base: 1, lg: 2 }}>
           {filteredClients.map((client) => {
             const clientAppointments = appointmentsByClient.get(client.id) ?? [];
-            const upcoming = clientAppointments.find(
-              (appointment) => new Date(appointment.dateTime).getTime() >= Date.now(),
-            );
+            const upcoming = clientAppointments
+              .filter((appointment) => new Date(appointment.dateTime).getTime() >= Date.now())
+              .sort(
+                (left, right) =>
+                  new Date(left.dateTime).getTime() - new Date(right.dateTime).getTime(),
+              )[0];
 
             return (
               <ClientCard

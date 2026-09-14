@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { salonDisplayName } from '@/mocks/mockData';
@@ -6,7 +6,7 @@ import type { MockSession } from '@/types';
 
 export const SESSION_COOKIE_NAME = 'gomita-nails-session';
 
-const SESSION_SECRET = process.env.GOMITA_SESSION_SECRET ?? 'gomita-nails-mock-session-secret';
+const SESSION_SECRET = process.env.GOMITA_SESSION_SECRET ?? randomBytes(32).toString('hex');
 
 function createSignature(payload: string) {
   return createHmac('sha256', SESSION_SECRET).update(payload).digest('hex');
