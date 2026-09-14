@@ -10,7 +10,7 @@ export const appointmentStatusMeta: Record<
   CANCELADA: { color: 'gray', label: 'Cancelada' },
 };
 
-const calendarKeyFormatter = new Intl.DateTimeFormat('en-CA', {
+const dateKeyFormatter = new Intl.DateTimeFormat('en-US', {
   day: '2-digit',
   month: '2-digit',
   timeZone: 'America/Mexico_City',
@@ -46,11 +46,20 @@ export function formatCurrency(amount: number) {
 }
 
 export function getCalendarDateKey(value: Date | string) {
-  return calendarKeyFormatter.format(new Date(value));
+  const date = new Date(value);
+  const parts = dateKeyFormatter.formatToParts(date);
+  const year = parts.find((part) => part.type === 'year')?.value;
+  const month = parts.find((part) => part.type === 'month')?.value;
+  const day = parts.find((part) => part.type === 'day')?.value;
+
+  return `${year}-${month}-${day}`;
 }
 
-export function isSameCalendarDay(dateTime: string, selectedDate: Date) {
-  return getCalendarDateKey(dateTime) === getCalendarDateKey(selectedDate);
+export function isSameCalendarDay(dateTime: string, selectedDate: Date | string) {
+  const comparisonKey =
+    typeof selectedDate === 'string' ? selectedDate : getCalendarDateKey(selectedDate);
+
+  return getCalendarDateKey(dateTime) === comparisonKey;
 }
 
 export function sortAppointmentsByDate(appointments: Appointment[]) {

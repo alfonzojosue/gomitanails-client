@@ -26,6 +26,7 @@ export async function login(
     maxAge: 60 * 60 * 24 * 7,
     path: '/',
     sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
   });
 
   redirect('/');

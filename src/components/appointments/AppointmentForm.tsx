@@ -24,9 +24,10 @@ interface AppointmentFormProps {
 }
 
 export function AppointmentForm({ clients, services, onSubmit }: AppointmentFormProps) {
+  const [minimumDate] = useState(() => new Date());
   const [clientId, setClientId] = useState<string | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(services[0]?.id ?? null);
-  const [dateTime, setDateTime] = useState<Date | string | null>(new Date());
+  const [dateTime, setDateTime] = useState<Date | string | null>(minimumDate);
   const [designNotes, setDesignNotes] = useState('');
   const [createQuickClient, setCreateQuickClient] = useState(false);
   const [quickClientName, setQuickClientName] = useState('');
@@ -47,7 +48,7 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
   const resetForm = () => {
     setClientId(null);
     setServiceId(services[0]?.id ?? null);
-    setDateTime(new Date());
+    setDateTime(minimumDate);
     setDesignNotes('');
     setCreateQuickClient(false);
     setQuickClientName('');
@@ -158,7 +159,7 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
         value={dateTime}
         onChange={(value) => setDateTime(value)}
         leftSection={<IconCalendarEvent size={16} />}
-        minDate={new Date()}
+        minDate={minimumDate}
       />
 
       <Textarea

@@ -1,8 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Card, Group, Select, Stack, Text, Title } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
+import { Card, Group, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconCalendarEvent } from '@tabler/icons-react';
 import { AppointmentCard } from '@/components/appointments/AppointmentCard';
 import { NewAppointmentButton } from '@/components/appointments/NewAppointmentButton';
@@ -19,13 +18,13 @@ const statusOptions = [
 
 export default function CitasPage() {
   const { appointments } = useAppData();
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
   const filteredAppointments = useMemo(
     () =>
       appointments.filter((appointment) => {
-        const matchesDate = selectedDate ? isSameCalendarDay(appointment.dateTime, new Date(selectedDate)) : true;
+        const matchesDate = selectedDate ? isSameCalendarDay(appointment.dateTime, selectedDate) : true;
         const matchesStatus =
           selectedStatus === 'ALL' ? true : appointment.status === (selectedStatus as AppointmentStatus);
 
@@ -46,12 +45,11 @@ export default function CitasPage() {
 
       <Card className="glass-panel">
         <Group grow align="flex-end">
-          <DateInput
-            clearable
+          <TextInput
             label="Filtrar por fecha"
-            placeholder="Todas las fechas"
+            type="date"
             value={selectedDate}
-            onChange={(value) => setSelectedDate(value)}
+            onChange={(event) => setSelectedDate(event.currentTarget.value)}
             leftSection={<IconCalendarEvent size={16} />}
           />
           <Select
