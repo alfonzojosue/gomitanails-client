@@ -18,7 +18,11 @@ export function CalendarView({ appointments, selectedDate, onDateChange }: Calen
     <Stack gap="xs">
       <Calendar
         date={selectedDate}
-        onDateChange={(value) => onDateChange(new Date(value))}
+        onDateChange={(value) => {
+          if (value) {
+            onDateChange(new Date(value));
+          }
+        }}
         renderDay={(date) => {
           const hasAppointment = appointmentDays.has(getCalendarDateKey(date));
 

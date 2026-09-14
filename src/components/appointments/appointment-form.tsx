@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
@@ -47,6 +47,14 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
   const [quickClientPhone, setQuickClientPhone] = useState('');
   const [quickClientEmail, setQuickClientEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setMinimumDate(new Date());
+    }, 30_000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   const clientOptions = clients.map((client) => ({
     label: `${client.name} · ${client.phone}`,

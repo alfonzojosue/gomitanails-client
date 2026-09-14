@@ -45,6 +45,7 @@ export function Navbar({ email }: NavbarProps) {
                 size="xs"
                 variant={isActive ? 'filled' : 'light'}
                 color={isActive ? 'bubblegum' : 'lavender'}
+                aria-current={isActive ? 'page' : undefined}
               >
                 {item.label}
               </Button>
