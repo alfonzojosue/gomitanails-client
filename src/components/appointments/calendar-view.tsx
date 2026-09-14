@@ -1,14 +1,14 @@
 'use client';
 
 import { Indicator, Stack, Text } from '@mantine/core';
-import { DatePicker } from '@mantine/dates';
+import { Calendar } from '@mantine/dates';
 import { getCalendarDateKey } from '@/lib/appointments';
 import type { Appointment } from '@/types';
 
 interface CalendarViewProps {
   appointments: Appointment[];
-  selectedDate: string;
-  onDateChange: (date: string) => void;
+  selectedDate: Date;
+  onDateChange: (date: Date) => void;
 }
 
 export function CalendarView({ appointments, selectedDate, onDateChange }: CalendarViewProps) {
@@ -16,20 +16,15 @@ export function CalendarView({ appointments, selectedDate, onDateChange }: Calen
 
   return (
     <Stack gap="xs">
-      <DatePicker
-        value={selectedDate}
-        onChange={(value) => {
-          if (value) {
-            onDateChange(value);
-          }
-        }}
+      <Calendar
+        date={selectedDate}
+        onDateChange={(value) => onDateChange(new Date(value))}
         renderDay={(date) => {
           const hasAppointment = appointmentDays.has(getCalendarDateKey(date));
-          const parsedDate = new Date(date);
 
           return (
             <Indicator size={6} color="bubblegum" offset={-2} disabled={!hasAppointment}>
-              <div>{parsedDate.getDate()}</div>
+              {new Date(date).getDate()}
             </Indicator>
           );
         }}

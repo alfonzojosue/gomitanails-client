@@ -44,10 +44,13 @@ export default function HomePage() {
     const nextUpcomingAppointments = appointments.filter(
       (appointment) => new Date(appointment.dateTime).getTime() >= today.getTime(),
     );
+    const sortedUpcomingAppointments = [...nextUpcomingAppointments].sort(
+      (left, right) => new Date(left.dateTime).getTime() - new Date(right.dateTime).getTime(),
+    );
     const nextDayRevenue = nextTodayAppointments
       .filter((appointment) => appointment.status !== 'CANCELADA')
       .reduce((total, appointment) => total + appointment.servicePrice, 0);
-    const nextUpcomingClients = nextUpcomingAppointments
+    const nextUpcomingClients = sortedUpcomingAppointments
       .slice(0, 3)
       .map((appointment) => appointment.clientName);
 

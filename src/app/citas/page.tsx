@@ -20,7 +20,7 @@ export default function CitasPage() {
   const router = useRouter();
   const { appointments, clients, updateAppointmentStatus } = useAppData();
   const { isAuthenticated, session } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(() => getCalendarDateKey(new Date()));
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [openedCreate, createModal] = useDisclosure(false);
   const [openedDetail, detailModal] = useDisclosure(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);

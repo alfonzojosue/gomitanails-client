@@ -37,7 +37,7 @@ function parseDateTimeValue(value: Date | string | null) {
 }
 
 export function AppointmentForm({ clients, services, onSubmit }: AppointmentFormProps) {
-  const [minimumDate] = useState(() => new Date());
+  const [minimumDate, setMinimumDate] = useState(() => new Date());
   const [clientId, setClientId] = useState<string | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(services[0]?.id ?? null);
   const [dateTime, setDateTime] = useState<Date | string | null>(minimumDate);
@@ -65,9 +65,11 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
       : undefined;
 
   const resetForm = () => {
+    const nextMinimumDate = new Date();
     setClientId(null);
     setServiceId(services[0]?.id ?? null);
-    setDateTime(minimumDate);
+    setMinimumDate(nextMinimumDate);
+    setDateTime(nextMinimumDate);
     setDesignNotes('');
     setCreateQuickClient(false);
     setQuickClientName('');
