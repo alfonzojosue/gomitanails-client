@@ -1,17 +1,9 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import {
-  AppShell,
-  AppShellHeader,
-  AppShellMain,
-  Container,
-  MantineProvider,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
-import { Navigation } from '@/components/Navigation';
+import { getMockSession } from '@/lib/auth';
+import { AppProviders } from '@/components/providers/AppProviders';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -19,30 +11,13 @@ export const metadata: Metadata = {
   description: 'Sistema de gestión para citas, clientes y servicios de Gomita Nails.',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const session = await getMockSession();
+
   return (
     <html lang="es">
       <body>
-        <MantineProvider>
-          <AppShell padding="md" header={{ height: { base: 200, sm: 170 } }}>
-            <AppShellHeader withBorder p="md">
-              <Container size="lg">
-                <Stack gap={4}>
-                  <Title order={2}>Gomita Nails</Title>
-                  <Text size="sm" c="dimmed">
-                    Gestión de citas, clientes y servicios
-                  </Text>
-                  <Navigation />
-                </Stack>
-              </Container>
-            </AppShellHeader>
-            <AppShellMain>
-              <Container size="lg" py="md">
-                {children}
-              </Container>
-            </AppShellMain>
-          </AppShell>
-        </MantineProvider>
+        <AppProviders initialSession={session}>{children}</AppProviders>
       </body>
     </html>
   );
