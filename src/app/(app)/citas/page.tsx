@@ -19,13 +19,13 @@ const statusOptions = [
 
 export default function CitasPage() {
   const { appointments } = useAppData();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
   const filteredAppointments = useMemo(
     () =>
       appointments.filter((appointment) => {
-        const matchesDate = selectedDate ? isSameCalendarDay(appointment.dateTime, selectedDate) : true;
+        const matchesDate = selectedDate ? isSameCalendarDay(appointment.dateTime, new Date(selectedDate)) : true;
         const matchesStatus =
           selectedStatus === 'ALL' ? true : appointment.status === (selectedStatus as AppointmentStatus);
 
@@ -51,7 +51,7 @@ export default function CitasPage() {
             label="Filtrar por fecha"
             placeholder="Todas las fechas"
             value={selectedDate}
-            onChange={setSelectedDate}
+            onChange={(value) => setSelectedDate(value)}
             leftSection={<IconCalendarEvent size={16} />}
           />
           <Select

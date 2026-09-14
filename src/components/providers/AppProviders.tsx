@@ -18,8 +18,8 @@ export function AppProviders({
 }) {
   return (
     <MantineProvider theme={theme} defaultColorScheme="light">
-      <DatesProvider settings={{ locale: 'es', timezone: 'America/Mexico_City' }}>
-        <AuthProvider initialSession={initialSession}>
+      <DatesProvider settings={{ locale: 'es' }}>
+        <AuthProvider key={initialSession?.email ?? 'guest'} initialSession={initialSession}>
           <AppDataProvider>{children}</AppDataProvider>
         </AuthProvider>
       </DatesProvider>

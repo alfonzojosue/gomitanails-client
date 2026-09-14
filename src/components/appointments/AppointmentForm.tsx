@@ -26,7 +26,7 @@ interface AppointmentFormProps {
 export function AppointmentForm({ clients, services, onSubmit }: AppointmentFormProps) {
   const [clientId, setClientId] = useState<string | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(services[0]?.id ?? null);
-  const [dateTime, setDateTime] = useState<Date | null>(new Date());
+  const [dateTime, setDateTime] = useState<Date | string | null>(new Date());
   const [designNotes, setDesignNotes] = useState('');
   const [createQuickClient, setCreateQuickClient] = useState(false);
   const [quickClientName, setQuickClientName] = useState('');
@@ -75,7 +75,7 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
     onSubmit({
       clientId: createQuickClient ? undefined : clientId ?? undefined,
       serviceId,
-      dateTime: dateTime.toISOString(),
+      dateTime: new Date(dateTime).toISOString(),
       designNotes: designNotes.trim() || 'Inspiración a definir en el estudio.',
       status: 'PENDIENTE',
       newClient: createQuickClient
@@ -156,7 +156,7 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
         required
         label="Fecha y hora"
         value={dateTime}
-        onChange={setDateTime}
+        onChange={(value) => setDateTime(value)}
         leftSection={<IconCalendarEvent size={16} />}
         minDate={new Date()}
       />

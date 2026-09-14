@@ -3,7 +3,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type Dispatch,
@@ -28,10 +27,6 @@ export function AuthProvider({
   initialSession: MockSession | null;
 }) {
   const [session, setSession] = useState<MockSession | null>(initialSession);
-
-  useEffect(() => {
-    setSession(initialSession);
-  }, [initialSession]);
 
   const value = useMemo(
     () => ({

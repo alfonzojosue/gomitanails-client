@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
 import { useLocalStorage } from '@mantine/hooks';
 import { appointmentsMock, clientsMock, servicesMock } from '@/mocks/mockData';
 import { sortAppointmentsByDate } from '@/lib/appointments';
@@ -38,66 +38,75 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     defaultValue: appointmentsMock,
   });
 
-  const addClient = (input: CreateClientInput) => {
-    const nextClient: Client = {
-      id: createId('cli'),
-      name: input.name.trim(),
-      phone: input.phone.trim(),
-      email: input.email?.trim() || undefined,
-      notes: input.notes?.trim() || 'Cliente registrada desde agenda rápida.',
-      allergies: input.allergies?.filter(Boolean) ?? [],
-      preferredLength: input.preferredLength?.trim() || 'Por definir',
-      preferredShape: input.preferredShape?.trim() || 'Por definir',
-      nailNotes: input.nailNotes?.trim() || 'Sin notas de uñas registradas aún.',
-      favoriteStyle: input.favoriteStyle?.trim() || 'Estilo por descubrir ✨',
-    };
+  const addClient = useCallback(
+    (input: CreateClientInput) => {
+      const nextClient: Client = {
+        id: createId('cli'),
+        name: input.name.trim(),
+        phone: input.phone.trim(),
+        email: input.email?.trim() || undefined,
+        notes: input.notes?.trim() || 'Cliente registrada desde agenda rápida.',
+        allergies: input.allergies?.filter(Boolean) ?? [],
+        preferredLength: input.preferredLength?.trim() || 'Por definir',
+        preferredShape: input.preferredShape?.trim() || 'Por definir',
+        nailNotes: input.nailNotes?.trim() || 'Sin notas de uñas registradas aún.',
+        favoriteStyle: input.favoriteStyle?.trim() || 'Estilo por descubrir ✨',
+      };
 
-    setClients((currentClients) => [...currentClients, nextClient]);
+      setClients((currentClients) => [...currentClients, nextClient]);
 
-    return nextClient;
-  };
+      return nextClient;
+    },
+    [setClients],
+  );
 
-  const addAppointment = (input: CreateAppointmentInput) => {
-    const service = servicesMock.find((item) => item.id === input.serviceId);
+  const addAppointment = useCallback(
+    (input: CreateAppointmentInput) => {
+      const service = servicesMock.find((item) => item.id === input.serviceId);
 
-    if (!service) {
-      return null;
-    }
+      if (!service) {
+        return null;
+      }
 
-    const selectedClient = input.newClient
-      ? addClient(input.newClient)
-      : clients.find((item) => item.id === input.clientId);
+      const selectedClient = input.newClient
+        ? addClient(input.newClient)
+        : clients.find((item) => item.id === input.clientId);
 
-    if (!selectedClient) {
-      return null;
-    }
+      if (!selectedClient) {
+        return null;
+      }
 
-    const nextAppointment: Appointment = {
-      id: createId('apt'),
-      clientId: selectedClient.id,
-      clientName: selectedClient.name,
-      serviceId: service.id,
-      serviceName: service.name,
-      servicePrice: service.price,
-      dateTime: input.dateTime,
-      status: input.status ?? 'PENDIENTE',
-      designNotes: input.designNotes.trim(),
-    };
+      const nextAppointment: Appointment = {
+        id: createId('apt'),
+        clientId: selectedClient.id,
+        clientName: selectedClient.name,
+        serviceId: service.id,
+        serviceName: service.name,
+        servicePrice: service.price,
+        dateTime: input.dateTime,
+        status: input.status ?? 'PENDIENTE',
+        designNotes: input.designNotes.trim(),
+      };
 
-    setAppointments((currentAppointments) =>
-      sortAppointmentsByDate([...currentAppointments, nextAppointment]),
-    );
+      setAppointments((currentAppointments) =>
+        sortAppointmentsByDate([...currentAppointments, nextAppointment]),
+      );
 
-    return nextAppointment;
-  };
+      return nextAppointment;
+    },
+    [addClient, clients, setAppointments],
+  );
 
-  const updateAppointmentStatus = (appointmentId: string, status: AppointmentStatus) => {
-    setAppointments((currentAppointments) =>
-      currentAppointments.map((appointment) =>
-        appointment.id === appointmentId ? { ...appointment, status } : appointment,
-      ),
-    );
-  };
+  const updateAppointmentStatus = useCallback(
+    (appointmentId: string, status: AppointmentStatus) => {
+      setAppointments((currentAppointments) =>
+        currentAppointments.map((appointment) =>
+          appointment.id === appointmentId ? { ...appointment, status } : appointment,
+        ),
+      );
+    },
+    [setAppointments],
+  );
 
   const value = useMemo(
     () => ({
@@ -108,7 +117,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       addClient,
       updateAppointmentStatus,
     }),
-    [appointments, clients],
+    [addAppointment, addClient, appointments, clients, updateAppointmentStatus],
   );
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;
