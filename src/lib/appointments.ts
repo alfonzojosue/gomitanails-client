@@ -33,6 +33,10 @@ const currencyFormatter = new Intl.NumberFormat('es-MX', {
   style: 'currency',
 });
 
+function pad(value: number) {
+  return value.toString().padStart(2, '0');
+}
+
 export function formatAppointmentDate(dateTime: string) {
   return dateFormatter.format(new Date(dateTime));
 }
@@ -60,6 +64,18 @@ export function isSameCalendarDay(dateTime: string, selectedDate: Date | string)
     typeof selectedDate === 'string' ? selectedDate : getCalendarDateKey(selectedDate);
 
   return getCalendarDateKey(dateTime) === comparisonKey;
+}
+
+export function serializeLocalDateTime(value: Date | string) {
+  const normalizedValue = typeof value === 'string' ? value.replace(' ', 'T') : value;
+  const date = normalizedValue instanceof Date ? normalizedValue : new Date(normalizedValue);
+  const timezoneOffsetMinutes = -date.getTimezoneOffset();
+  const sign = timezoneOffsetMinutes >= 0 ? '+' : '-';
+  const absoluteOffset = Math.abs(timezoneOffsetMinutes);
+  const offsetHours = pad(Math.floor(absoluteOffset / 60));
+  const offsetMinutes = pad(absoluteOffset % 60);
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}${sign}${offsetHours}:${offsetMinutes}`;
 }
 
 export function sortAppointmentsByDate(appointments: Appointment[]) {

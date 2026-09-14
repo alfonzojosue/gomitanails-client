@@ -15,6 +15,7 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconCalendarEvent, IconDeviceFloppy, IconSparkles } from '@tabler/icons-react';
+import { serializeLocalDateTime } from '@/lib/appointments';
 import type { Client, CreateAppointmentInput, Service } from '@/types';
 
 interface AppointmentFormProps {
@@ -76,7 +77,7 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
     onSubmit({
       clientId: createQuickClient ? undefined : clientId ?? undefined,
       serviceId,
-      dateTime: new Date(dateTime).toISOString(),
+      dateTime: serializeLocalDateTime(dateTime),
       designNotes: designNotes.trim() || 'Inspiración a definir en el estudio.',
       status: 'PENDIENTE',
       newClient: createQuickClient

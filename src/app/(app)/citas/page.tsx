@@ -14,6 +14,7 @@ const statusOptions = [
   { label: 'Pendiente', value: 'PENDIENTE' },
   { label: 'Confirmada', value: 'CONFIRMADA' },
   { label: 'Completada', value: 'COMPLETADA' },
+  { label: 'Cancelada', value: 'CANCELADA' },
 ];
 
 export default function CitasPage() {

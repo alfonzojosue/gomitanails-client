@@ -25,8 +25,11 @@ export function CreateAppointmentModal({ opened, onClose }: CreateAppointmentMod
           clients={clients}
           services={services}
           onSubmit={(values) => {
-            addAppointment(values);
-            onClose();
+            const nextAppointment = addAppointment(values);
+
+            if (nextAppointment) {
+              onClose();
+            }
           }}
         />
       </Stack>
