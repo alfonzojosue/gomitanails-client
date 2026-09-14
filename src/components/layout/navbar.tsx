@@ -21,10 +21,18 @@ export function Navbar({ email }: NavbarProps) {
 
   return (
     <Paper className="glass-panel" p="md" radius="xl" component="header">
-      <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+      <Box
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 16,
+          flexWrap: 'wrap',
+        }}
+      >
         <Text fw={800}>Gomita Nails 💅</Text>
 
-        <Group gap="xs" wrap="nowrap">
+        <Group gap="xs" style={{ flex: 1, justifyContent: 'center' }}>
           {navItems.map((item) => {
             const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
 
@@ -44,7 +52,7 @@ export function Navbar({ email }: NavbarProps) {
           })}
         </Group>
 
-        <Group gap="sm" wrap="nowrap">
+        <Group gap="sm">
           <Text size="sm" c="dimmed">
             {email}
           </Text>

@@ -36,15 +36,27 @@ export default function HomePage() {
     }
   }, [isAuthenticated, router, session]);
 
-  const today = new Date();
-  const todayAppointments = appointments.filter((appointment) => isSameCalendarDay(appointment.dateTime, today));
-  const upcomingAppointments = appointments.filter(
-    (appointment) => new Date(appointment.dateTime).getTime() >= today.getTime(),
-  );
-  const dayRevenue = todayAppointments
-    .filter((appointment) => appointment.status !== 'CANCELADA')
-    .reduce((total, appointment) => total + appointment.servicePrice, 0);
-  const upcomingClients = upcomingAppointments.slice(0, 3).map((appointment) => appointment.clientName);
+  const { dayRevenue, todayAppointments, upcomingClients } = useMemo(() => {
+    const today = new Date();
+    const nextTodayAppointments = appointments.filter((appointment) =>
+      isSameCalendarDay(appointment.dateTime, today),
+    );
+    const nextUpcomingAppointments = appointments.filter(
+      (appointment) => new Date(appointment.dateTime).getTime() >= today.getTime(),
+    );
+    const nextDayRevenue = nextTodayAppointments
+      .filter((appointment) => appointment.status !== 'CANCELADA')
+      .reduce((total, appointment) => total + appointment.servicePrice, 0);
+    const nextUpcomingClients = nextUpcomingAppointments
+      .slice(0, 3)
+      .map((appointment) => appointment.clientName);
+
+    return {
+      todayAppointments: nextTodayAppointments,
+      dayRevenue: nextDayRevenue,
+      upcomingClients: nextUpcomingClients,
+    };
+  }, [appointments]);
 
   const stats = useMemo(
     () => [

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Group, Stack } from '@mantine/core';
+import { Button, Card, Group, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { CalendarView } from '@/components/appointments/calendar-view';
@@ -64,16 +64,25 @@ export default function CitasPage() {
         <CalendarView appointments={appointments} selectedDate={selectedDate} onDateChange={setSelectedDate} />
 
         <Stack gap="md">
-          {filteredAppointments.map((appointment) => (
-            <AppointmentCard
-              key={appointment.id}
-              appointment={appointment}
-              onOpenDetail={(nextAppointment) => {
-                setSelectedAppointment(nextAppointment);
-                detailModal.open();
-              }}
-            />
-          ))}
+          {filteredAppointments.length > 0 ? (
+            filteredAppointments.map((appointment) => (
+              <AppointmentCard
+                key={appointment.id}
+                appointment={appointment}
+                onOpenDetail={(nextAppointment) => {
+                  setSelectedAppointment(nextAppointment);
+                  detailModal.open();
+                }}
+              />
+            ))
+          ) : (
+            <Card className="glass-panel">
+              <Text fw={600}>No hay citas para la fecha seleccionada.</Text>
+              <Text size="sm" c="dimmed">
+                Elige otro día en el calendario o crea una nueva cita.
+              </Text>
+            </Card>
+          )}
         </Stack>
       </PageContainer>
 

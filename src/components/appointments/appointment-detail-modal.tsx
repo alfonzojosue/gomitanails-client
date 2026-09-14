@@ -12,6 +12,10 @@ const statusOptions: { label: string; value: AppointmentStatus }[] = [
   { label: 'CANCELADA', value: 'CANCELADA' },
 ];
 
+function isAppointmentStatus(value: string): value is AppointmentStatus {
+  return statusOptions.some((statusOption) => statusOption.value === value);
+}
+
 interface AppointmentDetailModalProps {
   appointment: Appointment | null;
   clientPhone?: string;
@@ -55,8 +59,8 @@ export function AppointmentDetailModal({
             data={statusOptions}
             value={appointment.status}
             onChange={(value) => {
-              if (value) {
-                onStatusChange(appointment.id, value as AppointmentStatus);
+              if (value && isAppointmentStatus(value)) {
+                onStatusChange(appointment.id, value);
               }
             }}
           />
