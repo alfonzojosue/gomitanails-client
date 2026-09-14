@@ -1,15 +1,15 @@
 'use client';
 
 import { Modal, Stack, Text, Title } from '@mantine/core';
-import { AppointmentForm } from '@/components/appointments/AppointmentForm';
-import { useAppData } from '@/components/providers/AppDataProvider';
+import { AppointmentForm } from '@/components/appointments/appointment-form';
+import { useAppData } from '@/components/providers/app-data-provider';
 
-interface CreateAppointmentModalProps {
+interface NewAppointmentModalProps {
   opened: boolean;
   onClose: () => void;
 }
 
-export function CreateAppointmentModal({ opened, onClose }: CreateAppointmentModalProps) {
+export function NewAppointmentModal({ opened, onClose }: NewAppointmentModalProps) {
   const { addAppointment, clients, services } = useAppData();
 
   return (

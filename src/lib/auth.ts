@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { salonDisplayName } from '@/mocks/mockData';
+import { salonDisplayName } from '@/mocks/mock-data';
 import type { MockSession } from '@/types';
 
 export const SESSION_COOKIE_NAME = 'gomita-nails-session';

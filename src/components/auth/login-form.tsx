@@ -15,7 +15,7 @@ import {
   Title,
 } from '@mantine/core';
 import { IconHeart, IconSparkles, IconStars } from '@tabler/icons-react';
-import { login } from '@/app/(auth)/login/actions';
+import { login } from '@/app/login/actions';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
