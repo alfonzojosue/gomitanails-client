@@ -5,6 +5,14 @@ import { redirect } from 'next/navigation';
 import { createSessionToken, SESSION_COOKIE_NAME } from '@/lib/auth';
 import type { LoginActionState } from '@/types';
 
+const sessionCookieOptions = {
+  httpOnly: true,
+  maxAge: 60 * 60 * 24 * 7,
+  path: '/',
+  sameSite: 'lax' as const,
+  secure: process.env.NODE_ENV === 'production',
+};
+
 export async function login(
   _previousState: LoginActionState | undefined,
   formData: FormData,
@@ -21,19 +29,13 @@ export async function login(
   }
 
   const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE_NAME, createSessionToken(email), {
-    httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7,
-    path: '/',
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-  });
+  cookieStore.set(SESSION_COOKIE_NAME, createSessionToken(email), sessionCookieOptions);
 
   redirect('/');
 }
 
 export async function logout() {
   const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
+  cookieStore.delete({ name: SESSION_COOKIE_NAME, path: sessionCookieOptions.path });
   redirect('/login');
 }

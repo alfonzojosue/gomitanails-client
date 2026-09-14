@@ -18,7 +18,7 @@ const statusOptions = [
 ];
 
 export default function CitasPage() {
-  const { appointments } = useAppData();
+  const { appointments, updateAppointmentStatus } = useAppData();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
@@ -64,7 +64,11 @@ export default function CitasPage() {
 
       {filteredAppointments.length > 0 ? (
         filteredAppointments.map((appointment) => (
-          <AppointmentCard key={appointment.id} appointment={appointment} />
+          <AppointmentCard
+            key={appointment.id}
+            appointment={appointment}
+            onComplete={(appointmentId) => updateAppointmentStatus(appointmentId, 'COMPLETADA')}
+          />
         ))
       ) : (
         <Card className="glass-panel">

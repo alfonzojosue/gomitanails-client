@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { salonDisplayName } from '@/mocks/mockData';
@@ -6,10 +6,20 @@ import type { MockSession } from '@/types';
 
 export const SESSION_COOKIE_NAME = 'gomita-nails-session';
 
-const SESSION_SECRET = process.env.GOMITA_SESSION_SECRET ?? randomBytes(32).toString('hex');
+function getSessionSecret() {
+  if (process.env.GOMITA_SESSION_SECRET) {
+    return process.env.GOMITA_SESSION_SECRET;
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    return 'gomita-nails-dev-session-secret';
+  }
+
+  throw new Error('GOMITA_SESSION_SECRET es obligatorio en producción.');
+}
 
 function createSignature(payload: string) {
-  return createHmac('sha256', SESSION_SECRET).update(payload).digest('hex');
+  return createHmac('sha256', getSessionSecret()).update(payload).digest('hex');
 }
 
 function getSessionEmail(token: string) {
