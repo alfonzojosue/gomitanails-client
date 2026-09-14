@@ -41,7 +41,7 @@ export function AppointmentDetailModal({
           <Text size="sm">
             Teléfono:{' '}
             {whatsappPhone ? (
-              <Anchor href={`https://wa.me/${whatsappPhone}`} target="_blank" rel="noreferrer">
+              <Anchor href={`https://wa.me/${whatsappPhone}`} target="_blank" rel="noopener noreferrer">
                 {clientPhone}
               </Anchor>
             ) : (

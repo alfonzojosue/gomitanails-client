@@ -14,7 +14,6 @@ import { PageContainer } from '@/components/layout/page-container';
 import { useAppData } from '@/components/providers/app-data-provider';
 import { useAuth } from '@/components/providers/auth-provider';
 import { getCalendarDateKey } from '@/lib/appointments';
-import type { Appointment } from '@/types';
 
 export default function CitasPage() {
   const router = useRouter();
@@ -23,7 +22,7 @@ export default function CitasPage() {
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [openedCreate, createModal] = useDisclosure(false);
   const [openedDetail, detailModal] = useDisclosure(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated || !session) {
@@ -39,6 +38,7 @@ export default function CitasPage() {
     [appointments, selectedDate],
   );
 
+  const selectedAppointment = appointments.find((appointment) => appointment.id === selectedAppointmentId) ?? null;
   const selectedClient = clients.find((client) => client.id === selectedAppointment?.clientId);
 
   if (!isAuthenticated || !session) return null;
@@ -70,7 +70,7 @@ export default function CitasPage() {
                 key={appointment.id}
                 appointment={appointment}
                 onOpenDetail={(nextAppointment) => {
-                  setSelectedAppointment(nextAppointment);
+                  setSelectedAppointmentId(nextAppointment.id);
                   detailModal.open();
                 }}
               />

@@ -20,7 +20,6 @@ import { NewAppointmentModal } from '@/components/appointments/new-appointment-m
 import { useAppData } from '@/components/providers/app-data-provider';
 import { useAuth } from '@/components/providers/auth-provider';
 import { formatCurrency, isSameCalendarDay } from '@/lib/appointments';
-import type { Appointment } from '@/types';
 
 export default function HomePage() {
   const router = useRouter();
@@ -28,7 +27,7 @@ export default function HomePage() {
   const { isAuthenticated, session } = useAuth();
   const [openedCreate, createModal] = useDisclosure(false);
   const [openedDetail, detailModal] = useDisclosure(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated || !session) {
@@ -88,6 +87,7 @@ export default function HomePage() {
     [dayRevenue, todayAppointments, upcomingClients],
   );
 
+  const selectedAppointment = appointments.find((appointment) => appointment.id === selectedAppointmentId) ?? null;
   const selectedClient = clients.find((client) => client.id === selectedAppointment?.clientId);
 
   if (!isAuthenticated || !session) return null;
@@ -126,7 +126,7 @@ export default function HomePage() {
         <TodayAgenda
           appointments={todayAppointments}
           onOpenDetail={(appointment) => {
-            setSelectedAppointment(appointment);
+            setSelectedAppointmentId(appointment.id);
             detailModal.open();
           }}
         />

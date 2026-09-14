@@ -94,6 +94,14 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
       return;
     }
 
+    const selectedDate = parseDateTimeValue(dateTime);
+    const now = new Date();
+
+    if (!selectedDate || selectedDate.getTime() < now.getTime()) {
+      setError('Selecciona una fecha y hora futuras para la cita.');
+      return;
+    }
+
     onSubmit({
       clientId: createQuickClient ? undefined : clientId ?? undefined,
       serviceId,
