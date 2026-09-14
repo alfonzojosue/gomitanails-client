@@ -1,6 +1,6 @@
 import { Center, Container, Stack, Text } from '@mantine/core';
 import { redirect } from 'next/navigation';
-import { LoginForm } from '@/components/auth/LoginForm';
+import { LoginForm } from '@/components/auth/login-form';
 import { getMockSession } from '@/lib/auth';
 
 export default async function LoginPage() {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
@@ -37,7 +37,7 @@ function parseDateTimeValue(value: Date | string | null) {
 }
 
 export function AppointmentForm({ clients, services, onSubmit }: AppointmentFormProps) {
-  const [minimumDate] = useState(() => new Date());
+  const [minimumDate, setMinimumDate] = useState(() => new Date());
   const [clientId, setClientId] = useState<string | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(services[0]?.id ?? null);
   const [dateTime, setDateTime] = useState<Date | string | null>(minimumDate);
@@ -47,6 +47,21 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
   const [quickClientPhone, setQuickClientPhone] = useState('');
   const [quickClientEmail, setQuickClientEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      const nextNow = new Date();
+      setMinimumDate(nextNow);
+      setDateTime((currentDateTime) => {
+        const currentSelection = parseDateTimeValue(currentDateTime);
+        return currentSelection && currentSelection.getTime() < nextNow.getTime()
+          ? nextNow
+          : currentDateTime;
+      });
+    }, 30_000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   const clientOptions = clients.map((client) => ({
     label: `${client.name} · ${client.phone}`,
@@ -65,9 +80,11 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
       : undefined;
 
   const resetForm = () => {
+    const nextMinimumDate = new Date();
     setClientId(null);
     setServiceId(services[0]?.id ?? null);
-    setDateTime(minimumDate);
+    setMinimumDate(nextMinimumDate);
+    setDateTime(nextMinimumDate);
     setDesignNotes('');
     setCreateQuickClient(false);
     setQuickClientName('');
@@ -89,6 +106,14 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
 
     if (createQuickClient && (!quickClientName.trim() || !quickClientPhone.trim())) {
       setError('Para la clienta rápida, agrega al menos nombre y teléfono.');
+      return;
+    }
+
+    const selectedDate = parseDateTimeValue(dateTime);
+    const now = new Date();
+
+    if (!selectedDate || selectedDate.getTime() < now.getTime()) {
+      setError('Selecciona una fecha y hora futuras para la cita.');
       return;
     }
 

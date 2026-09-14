@@ -6,8 +6,8 @@ import { DatesProvider } from '@mantine/dates';
 import { MantineProvider } from '@mantine/core';
 import type { MockSession } from '@/types';
 import { theme } from '@/theme/theme';
-import { AppDataProvider } from './AppDataProvider';
-import { AuthProvider } from './AuthProvider';
+import { AppDataProvider } from './app-data-provider';
+import { AuthProvider } from './auth-provider';
 
 export function AppProviders({
   children,

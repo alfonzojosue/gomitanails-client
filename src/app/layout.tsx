@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { getMockSession } from '@/lib/auth';
-import { AppProviders } from '@/components/providers/AppProviders';
+import { AppProviders } from '@/components/providers/app-providers';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import './globals.css';

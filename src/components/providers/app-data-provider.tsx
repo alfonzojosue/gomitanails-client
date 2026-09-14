@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { appointmentsMock, clientsMock, servicesMock } from '@/mocks/mockData';
+import { appointmentsMock, clientsMock, servicesMock } from '@/mocks/mock-data';
 import { sortAppointmentsByDate } from '@/lib/appointments';
 import type {
   Appointment,
