@@ -27,6 +27,17 @@ export default function ClientesPage() {
     });
   }, [clients, search]);
 
+  const appointmentsByClient = useMemo(() => {
+    const groupedAppointments = new Map<string, typeof appointments>();
+
+    appointments.forEach((appointment) => {
+      const clientAppointments = groupedAppointments.get(appointment.clientId) ?? [];
+      groupedAppointments.set(appointment.clientId, [...clientAppointments, appointment]);
+    });
+
+    return groupedAppointments;
+  }, [appointments]);
+
   return (
     <Stack gap="xl">
       <div>
@@ -49,13 +60,10 @@ export default function ClientesPage() {
       {filteredClients.length > 0 ? (
         <SimpleGrid cols={{ base: 1, lg: 2 }}>
           {filteredClients.map((client) => {
-            const clientAppointments = appointments.filter((appointment) => appointment.clientId === client.id);
-            const upcoming = clientAppointments
-              .filter((appointment) => new Date(appointment.dateTime).getTime() >= Date.now())
-              .sort(
-                (left, right) =>
-                  new Date(left.dateTime).getTime() - new Date(right.dateTime).getTime(),
-              )[0];
+            const clientAppointments = appointmentsByClient.get(client.id) ?? [];
+            const upcoming = clientAppointments.find(
+              (appointment) => new Date(appointment.dateTime).getTime() >= Date.now(),
+            );
 
             return (
               <ClientCard

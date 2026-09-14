@@ -50,6 +50,10 @@ export function formatCurrency(amount: number) {
 }
 
 export function getCalendarDateKey(value: Date | string) {
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+
   const date = new Date(value);
   const parts = dateKeyFormatter.formatToParts(date);
   const year = parts.find((part) => part.type === 'year')?.value;
@@ -61,7 +65,7 @@ export function getCalendarDateKey(value: Date | string) {
 
 export function isSameCalendarDay(dateTime: string, selectedDate: Date | string) {
   const comparisonKey =
-    typeof selectedDate === 'string' ? selectedDate : getCalendarDateKey(selectedDate);
+    typeof selectedDate === 'string' ? getCalendarDateKey(selectedDate) : getCalendarDateKey(selectedDate);
 
   return getCalendarDateKey(dateTime) === comparisonKey;
 }

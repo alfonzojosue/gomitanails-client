@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Alert,
   Button,
@@ -15,13 +15,25 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconCalendarEvent, IconDeviceFloppy, IconSparkles } from '@tabler/icons-react';
-import { serializeLocalDateTime } from '@/lib/appointments';
+import { getCalendarDateKey, serializeLocalDateTime } from '@/lib/appointments';
 import type { Client, CreateAppointmentInput, Service } from '@/types';
 
 interface AppointmentFormProps {
   clients: Client[];
   services: Service[];
   onSubmit: (values: CreateAppointmentInput) => void;
+}
+
+function formatTimeValue(date: Date) {
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+}
+
+function parseDateTimeValue(value: Date | string | null) {
+  if (!value) {
+    return null;
+  }
+
+  return value instanceof Date ? value : new Date(value.replace(' ', 'T'));
 }
 
 export function AppointmentForm({ clients, services, onSubmit }: AppointmentFormProps) {
@@ -45,6 +57,12 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
     label: `${service.name} · $${service.price}`,
     value: service.id,
   }));
+
+  const selectedDateTime = useMemo(() => parseDateTimeValue(dateTime), [dateTime]);
+  const minimumTime =
+    selectedDateTime && getCalendarDateKey(selectedDateTime) === getCalendarDateKey(minimumDate)
+      ? formatTimeValue(minimumDate)
+      : undefined;
 
   const resetForm = () => {
     setClientId(null);
@@ -161,6 +179,7 @@ export function AppointmentForm({ clients, services, onSubmit }: AppointmentForm
         onChange={(value) => setDateTime(value)}
         leftSection={<IconCalendarEvent size={16} />}
         minDate={minimumDate}
+        timePickerProps={{ min: minimumTime }}
       />
 
       <Textarea

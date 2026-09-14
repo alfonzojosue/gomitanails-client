@@ -1,7 +1,15 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
-import { useLocalStorage } from '@mantine/hooks';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { appointmentsMock, clientsMock, servicesMock } from '@/mocks/mockData';
 import { sortAppointmentsByDate } from '@/lib/appointments';
 import type {
@@ -22,42 +30,89 @@ interface AppDataContextValue {
   updateAppointmentStatus: (appointmentId: string, status: AppointmentStatus) => void;
 }
 
+interface AppDataStore {
+  appointments: Appointment[];
+  clients: Client[];
+}
+
 const AppDataContext = createContext<AppDataContextValue | null>(null);
+const STORAGE_KEY = 'gomita-nails-app-data';
+const defaultStore: AppDataStore = {
+  appointments: sortAppointmentsByDate(appointmentsMock),
+  clients: clientsMock,
+};
 
 function createId(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+function buildClient(input: CreateClientInput): Client {
+  return {
+    id: createId('cli'),
+    name: input.name.trim(),
+    phone: input.phone.trim(),
+    email: input.email?.trim() || undefined,
+    notes: input.notes?.trim() || 'Cliente registrada desde agenda rápida.',
+    allergies: input.allergies?.filter(Boolean) ?? [],
+    preferredLength: input.preferredLength?.trim() || 'Por definir',
+    preferredShape: input.preferredShape?.trim() || 'Por definir',
+    nailNotes: input.nailNotes?.trim() || 'Sin notas de uñas registradas aún.',
+    favoriteStyle: input.favoriteStyle?.trim() || 'Estilo por descubrir ✨',
+  };
+}
+
+function readInitialStore() {
+  if (typeof window === 'undefined') {
+    return defaultStore;
+  }
+
+  try {
+    const storedValue = window.localStorage.getItem(STORAGE_KEY);
+
+    if (!storedValue) {
+      return defaultStore;
+    }
+
+    const parsedValue = JSON.parse(storedValue) as Partial<AppDataStore>;
+
+    return {
+      appointments: Array.isArray(parsedValue.appointments)
+        ? sortAppointmentsByDate(parsedValue.appointments)
+        : defaultStore.appointments,
+      clients: Array.isArray(parsedValue.clients) ? parsedValue.clients : defaultStore.clients,
+    };
+  } catch {
+    return defaultStore;
+  }
+}
+
 export function AppDataProvider({ children }: { children: ReactNode }) {
-  const [clients, setClients] = useLocalStorage<Client[]>({
-    key: 'gomita-nails-clients',
-    defaultValue: clientsMock,
-  });
-  const [appointments, setAppointments] = useLocalStorage<Appointment[]>({
-    key: 'gomita-nails-appointments',
-    defaultValue: appointmentsMock,
-  });
+  const [store, setStore] = useState<AppDataStore>(readInitialStore);
+  const storeRef = useRef(store);
+
+  useEffect(() => {
+    storeRef.current = store;
+  }, [store]);
+
+  const commitStore = useCallback((nextStore: AppDataStore) => {
+    storeRef.current = nextStore;
+    setStore(nextStore);
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextStore));
+  }, []);
 
   const addClient = useCallback(
     (input: CreateClientInput) => {
-      const nextClient: Client = {
-        id: createId('cli'),
-        name: input.name.trim(),
-        phone: input.phone.trim(),
-        email: input.email?.trim() || undefined,
-        notes: input.notes?.trim() || 'Cliente registrada desde agenda rápida.',
-        allergies: input.allergies?.filter(Boolean) ?? [],
-        preferredLength: input.preferredLength?.trim() || 'Por definir',
-        preferredShape: input.preferredShape?.trim() || 'Por definir',
-        nailNotes: input.nailNotes?.trim() || 'Sin notas de uñas registradas aún.',
-        favoriteStyle: input.favoriteStyle?.trim() || 'Estilo por descubrir ✨',
+      const nextClient = buildClient(input);
+      const nextStore = {
+        ...storeRef.current,
+        clients: [...storeRef.current.clients, nextClient],
       };
 
-      setClients((currentClients) => [...currentClients, nextClient]);
+      commitStore(nextStore);
 
       return nextClient;
     },
-    [setClients],
+    [commitStore],
   );
 
   const addAppointment = useCallback(
@@ -68,9 +123,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         return null;
       }
 
+      const currentStore = storeRef.current;
       const selectedClient = input.newClient
-        ? addClient(input.newClient)
-        : clients.find((item) => item.id === input.clientId);
+        ? buildClient(input.newClient)
+        : currentStore.clients.find((item) => item.id === input.clientId);
 
       if (!selectedClient) {
         return null;
@@ -88,36 +144,45 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         designNotes: input.designNotes.trim(),
       };
 
-      setAppointments((currentAppointments) =>
-        sortAppointmentsByDate([...currentAppointments, nextAppointment]),
-      );
+      const nextStore = {
+        clients: input.newClient
+          ? [...currentStore.clients, selectedClient]
+          : currentStore.clients,
+        appointments: sortAppointmentsByDate([...currentStore.appointments, nextAppointment]),
+      };
+
+      commitStore(nextStore);
 
       return nextAppointment;
     },
-    [addClient, clients, setAppointments],
+    [commitStore],
   );
 
   const updateAppointmentStatus = useCallback(
     (appointmentId: string, status: AppointmentStatus) => {
-      setAppointments((currentAppointments) =>
-        currentAppointments.map((appointment) =>
+      const currentStore = storeRef.current;
+      const nextStore = {
+        ...currentStore,
+        appointments: currentStore.appointments.map((appointment) =>
           appointment.id === appointmentId ? { ...appointment, status } : appointment,
         ),
-      );
+      };
+
+      commitStore(nextStore);
     },
-    [setAppointments],
+    [commitStore],
   );
 
   const value = useMemo(
     () => ({
-      appointments: sortAppointmentsByDate(appointments),
-      clients,
+      appointments: store.appointments,
+      clients: store.clients,
       services: servicesMock,
       addAppointment,
       addClient,
       updateAppointmentStatus,
     }),
-    [addAppointment, addClient, appointments, clients, updateAppointmentStatus],
+    [addAppointment, addClient, store, updateAppointmentStatus],
   );
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;

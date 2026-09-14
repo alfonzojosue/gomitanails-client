@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SESSION_COOKIE_NAME } from '@/lib/auth';
+import { createSessionToken, SESSION_COOKIE_NAME } from '@/lib/auth';
 import type { LoginActionState } from '@/types';
 
 export async function login(
@@ -21,7 +21,7 @@ export async function login(
   }
 
   const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE_NAME, encodeURIComponent(email), {
+  cookieStore.set(SESSION_COOKIE_NAME, createSessionToken(email), {
     httpOnly: true,
     maxAge: 60 * 60 * 24 * 7,
     path: '/',
