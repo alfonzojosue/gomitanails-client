@@ -36,8 +36,6 @@ export default function HomePage() {
     }
   }, [isAuthenticated, router, session]);
 
-  if (!isAuthenticated || !session) return null;
-
   const today = new Date();
   const todayAppointments = appointments.filter((appointment) => isSameCalendarDay(appointment.dateTime, today));
   const upcomingAppointments = appointments.filter(
@@ -76,6 +74,8 @@ export default function HomePage() {
   );
 
   const selectedClient = clients.find((client) => client.id === selectedAppointment?.clientId);
+
+  if (!isAuthenticated || !session) return null;
 
   return (
     <Stack gap="md">

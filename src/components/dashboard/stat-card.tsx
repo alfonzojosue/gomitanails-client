@@ -1,8 +1,7 @@
 import { Card, Group, Stack, Text, Title } from '@mantine/core';
-import type { TablerIconsProps } from '@tabler/icons-react';
 
 interface StatCardProps {
-  icon: React.ComponentType<TablerIconsProps>;
+  icon: React.ComponentType<{ size?: number | string; color?: string }>;
   label: string;
   value: string;
   detail: string;

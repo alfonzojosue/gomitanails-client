@@ -7,8 +7,8 @@ import type { Appointment } from '@/types';
 
 interface CalendarViewProps {
   appointments: Appointment[];
-  selectedDate: Date;
-  onDateChange: (date: Date) => void;
+  selectedDate: string;
+  onDateChange: (date: string) => void;
 }
 
 export function CalendarView({ appointments, selectedDate, onDateChange }: CalendarViewProps) {
@@ -25,10 +25,11 @@ export function CalendarView({ appointments, selectedDate, onDateChange }: Calen
         }}
         renderDay={(date) => {
           const hasAppointment = appointmentDays.has(getCalendarDateKey(date));
+          const parsedDate = new Date(date);
 
           return (
             <Indicator size={6} color="bubblegum" offset={-2} disabled={!hasAppointment}>
-              <div>{date.getDate()}</div>
+              <div>{parsedDate.getDate()}</div>
             </Indicator>
           );
         }}

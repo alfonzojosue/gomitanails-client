@@ -1,9 +1,8 @@
 import { SimpleGrid } from '@mantine/core';
-import type { TablerIconsProps } from '@tabler/icons-react';
 import { StatCard } from '@/components/dashboard/stat-card';
 
 interface StatItem {
-  icon: React.ComponentType<TablerIconsProps>;
+  icon: React.ComponentType<{ size?: number | string; color?: string }>;
   label: string;
   value: string;
   detail: string;

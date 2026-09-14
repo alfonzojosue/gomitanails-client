@@ -23,8 +23,6 @@ export default function ClientesPage() {
     }
   }, [isAuthenticated, router, session]);
 
-  if (!isAuthenticated || !session) return null;
-
   const filteredClients = useMemo(() => {
     const searchValue = search.trim().toLowerCase();
 
@@ -51,6 +49,8 @@ export default function ClientesPage() {
 
     return groupedAppointments;
   }, [appointments]);
+
+  if (!isAuthenticated || !session) return null;
 
   return (
     <Stack gap="md">

@@ -20,7 +20,7 @@ export default function CitasPage() {
   const router = useRouter();
   const { appointments, clients, updateAppointmentStatus } = useAppData();
   const { isAuthenticated, session } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(() => getCalendarDateKey(new Date()));
   const [openedCreate, createModal] = useDisclosure(false);
   const [openedDetail, detailModal] = useDisclosure(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -31,8 +31,6 @@ export default function CitasPage() {
     }
   }, [isAuthenticated, router, session]);
 
-  if (!isAuthenticated || !session) return null;
-
   const filteredAppointments = useMemo(
     () =>
       appointments.filter(
@@ -42,6 +40,8 @@ export default function CitasPage() {
   );
 
   const selectedClient = clients.find((client) => client.id === selectedAppointment?.clientId);
+
+  if (!isAuthenticated || !session) return null;
 
   return (
     <Stack gap="md">
